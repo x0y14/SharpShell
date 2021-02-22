@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "/u1ljtpqtlJ6d81gDPBq/ZY+l82jd/ors2XjnbiP3AVslyqsl0XMe/cgSzUkK6Rk3gmE5M8AQ2zCBIGQ6E5y2g==",
+  "success": true,
+  "projectFilePath": "/Users/x0y14/dev/csharp/sharpshell/sharpshell/sharpshell.csproj",
+  "expectedPackageFiles": [
+    "/Users/x0y14/.nuget/packages/jsonloader/1.0.3/jsonloader.1.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
