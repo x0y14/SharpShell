@@ -107,6 +107,7 @@ namespace sharpshell
 
         public string Pwd()
         {
+            // testets
             return WhereAmI;
         }
         
