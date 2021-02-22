@@ -1,0 +1,6 @@
+{
+  "style": {
+      "welcome-message": "welcome to sharpshell!",
+      "prompt": "%whoami $ "
+  }
+}
