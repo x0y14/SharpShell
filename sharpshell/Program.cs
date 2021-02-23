@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using JsonLoader;
+using sharpshell.lib;
 
 namespace sharpshell
 {
@@ -15,7 +17,9 @@ namespace sharpshell
             // sh.Ls();
             Console.WriteLine($"now {sh.Pwd()}");
             sh.Cd("Qt");
-            Console.WriteLine($"now {sh.Pwd()}");
+            Console.WriteLine($"moved {sh.Pwd()}");
+
+            Dictionary<string, dynamic> fd = sh.Ls(sh.Pwd(), "");
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Diagnostics;
 using sharpshell.lib;
 using sharpshell.process;
 using sharpshell.misc;
-using static sharpshell.Logger;
 
 using static sharpshell.misc.Util;
 
@@ -28,10 +27,6 @@ namespace sharpshell
             WhereAmI = $"/Users/{WhoAmI()}";
 
             _process = new ProcessManager();
-
-            // settings
-
-            // if (settings.ContainsKey("welcome-message")){}
         }
 
         public void LoadSettings(string path)
@@ -40,44 +35,32 @@ namespace sharpshell
             // Settings = settings;
         }
         
+        
+        // ----------------------------------------------------------------
+        // CMDs
+        
         // use /usr/bin/whoami
         public string WhoAmI()
         {
             var whoami = new WhoAmI();
             return whoami.getUserName();
         }
-
-        // use /bin/ls
+        
         public Dictionary<string, dynamic> Ls(string path, string args)
         {
             var ls = new Ls();
-            return ls.GetFileAndDictionary(path, args);
+            return ls.GetFileAndDirectoryNameOnly(WhereAmI, path, args);
         }
         
-        public bool Cd(string path)
+        public string Cd(string path)
         {
-            // boolにすべきか？
-            // 新しいpathを返すべきか
-            var state = false;
-            var _cd = new Cd();
-            try
-            {
-                WhereAmI = _cd.Move(WhereAmI, path);
-                state = true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            return state;
+            var cd = new Cd();
+            WhereAmI = cd.Move(WhereAmI, path);
+            return WhereAmI;
         }
-
+        
         public string Pwd()
         {
-            #if DEBUG
-            ShellLogging(UserName, WhereAmI, "SharpShell.Pwd", "");
-            #endif
             return WhereAmI;
         }
         

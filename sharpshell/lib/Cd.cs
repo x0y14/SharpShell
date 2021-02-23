@@ -1,5 +1,4 @@
 using System;
-using sharpshell.lib;
 
 namespace sharpshell.lib
 {
@@ -13,10 +12,14 @@ namespace sharpshell.lib
         
         public string Move(string whereami, string path)
         {
+            // todo : 相対ぱすに対応。
+            // 現段階では、GetFileAndDirectoryNameOnlyにDirと認識されているもののみに反応する。(#1)
             string newPath;
-            var thisFloorsItem = _ls.GetFileAndDictionary(whereami, "");
-            if (thisFloorsItem["dirs"].Contains(path))
+            var thisFloorsItem = _ls.GetFileAndDirectoryNameOnly(whereami, whereami, "");
+
+            if (thisFloorsItem["d"].Contains(path))
             {
+                // (#1)
                 newPath = whereami + $"/{path}";
             }
             else

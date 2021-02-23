@@ -1,59 +1,71 @@
 using System;
 using System.Collections.Generic;
-using sharpshell.process;
-using sharpshell.misc;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace sharpshell.lib
 {
     public class Ls
     {
-        private readonly ProcessManager _process;
-        public Ls()
+        public Ls() {}
+        
+        public string RemoveTrashFromPath(string whereami, string path)
         {
-            _process = new ProcessManager();
-        }
-        
-        
-        
-        public Dictionary<string, dynamic> GetFileAndDictionary(string path, string args)
-        {
-            // これ/bin/lsに頼らないで自分で書くのもありかも。
-            // does not support args
-            var fileAndDirs = new List<string>();
-            var files = new List<string>();
-            var dirs = new List<string>();
-
-            var result = _process.MakeBinaryProcess("/bin/ls", $"{path} {args}");
-            result = Util.RemoveLastNewLine(result);
-            var items = result.Split("\n");
+            var cleaned_path = path;
             
-            var fi = 0;
-            foreach (var f in items)
+            var regText = $"{whereami}/{{1,1}}(.*)";
+            var reg = new Regex(regText, RegexOptions.Compiled);
+            
+            MatchCollection matches = reg.Matches(path);
+            
+            foreach (Match match in matches)
             {
-                fi++;
-                fileAndDirs.Add(f);
-                
-                #if DEBUG
-                Console.WriteLine($"({fi}) {f}");
-                #endif
-                
-                if (System.IO.Directory.Exists($"{path}/{f}"))
-                {
-                    dirs.Add(f);
-                }
-                else
-                {
-                    files.Add(f);
-                }
+                GroupCollection groups = match.Groups;
+                cleaned_path = groups[1].ToString();
             }
-            
-            // ShellLogging(UserName, WhereAmI, "SharpShell.Ls", path);
 
-            var data = new Dictionary<string, dynamic>();
-            data["files"] = files;
-            data["dirs"] = dirs;
-            data["all"] = fileAndDirs;
-            return data;
+            return cleaned_path;
         }
+
+        public List<string> GetDirs(string path)
+        {
+            var dirs = new List<string>();
+            return Directory.GetDirectories(path).ToList();
+        }
+
+        public List<string> GetFiles(string path)
+        {
+            var files = new List<string>();
+            return Directory.GetFiles(path).ToList();
+        }
+
+        public Dictionary<string, dynamic> GetFileAndDirectoryNameOnly(string whereami, string path, string args)
+        {
+            // 自作してみる。
+            var fileAndDirs = new Dictionary<string, dynamic>();
+            var files = GetFiles(path);
+            var dirs = GetDirs(path);
+
+            var fileNames = new List<string>();
+            var dirNames = new List<string>();
+
+            foreach (var file in files)
+            {
+                fileNames.Add(RemoveTrashFromPath(whereami,file));
+            }
+
+            foreach (var dir in dirs)
+            {
+                dirNames.Add(RemoveTrashFromPath(whereami,dir));
+            }
+
+            fileAndDirs["f"] = fileNames;
+            fileAndDirs["d"] = dirNames;
+            
+            return fileAndDirs;
+        }
+        
+        
     }
 }
