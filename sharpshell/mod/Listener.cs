@@ -1,4 +1,5 @@
 using System;
+using sharpshell.rule;
 
 namespace sharpshell.mod
 {
@@ -15,12 +16,12 @@ namespace sharpshell.mod
             _parser = new Parser();
         }
 
-        public void Listening(string prompt)
+        public Command Listening(string prompt)
         {
             Console.Write(prompt);
             // なぜか知らんが最後の改行は含まれない。
             var line = System.Console.ReadLine();
-            _parser.AnalyzeInputed(line);
+            return _parser.ParseInputed(line);
         }
     }
 }

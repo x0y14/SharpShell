@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -18,7 +19,7 @@ namespace sharpshell.lib
             // 現段階では、GetFileAndDirectoryNameOnlyにDirと認識されているもののみに反応する。(#1)
             // とゆかクソ遅い。
             string newPath;
-            var thisFloorsItem = _ls.GetFileAndDirectoryNameOnly(whereami, whereami, "");
+            var thisFloorsItem = _ls.GetFileAndDirectoryNameOnly(whereami, whereami, new List<string>());
 
             if (thisFloorsItem["d"].Contains(path))
             {

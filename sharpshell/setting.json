@@ -2,5 +2,8 @@
   "welcome-message": "welcome to sharpshell!",
   "style": {
       "prompt": "%whoami @ %whereami_full $ "
-  }
+  },
+  "path": [
+    "/Users/x0y14/dev/go/"
+  ]
 }

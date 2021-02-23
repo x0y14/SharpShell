@@ -8,7 +8,7 @@ namespace sharpshell.process
         
         public string MakeBinaryProcess(string bin_path, string args)
         {
-            // lsなど外部のソフトを使う時に使う。
+            // 外部のソフトを使う時に使う。
             // return value includes last newline.
             ProcessStartInfo process = new ProcessStartInfo(bin_path, args)
             {

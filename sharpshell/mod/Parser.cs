@@ -8,13 +8,14 @@ namespace sharpshell.mod
     {
         public Parser(){}
 
-        public Command AnalyzeInputed(string input)
+        public Command ParseInputed(string input)
         {
-            Console.WriteLine($"[INFO] inputed: `{input}`");
-            if (input.Contains(" "))
+            if (!input.Contains(" "))
             {
                 return new Command(input, new List<string>(), new List<string>());
             }
+            
+            // todo : まともなパース。
             
             return new Command();
         }

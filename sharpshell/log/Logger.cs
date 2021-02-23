@@ -1,7 +1,7 @@
 using System;
 
 
-namespace sharpshell
+namespace sharpshell.log
 {
     public class Logger
     {
@@ -10,7 +10,7 @@ namespace sharpshell
             #if DEBUG
             Console.WriteLine($"{DateTime.Now} | {path} | {userName} | {cmd} | {args}");
             #endif
-            // todo fileに保存
+            // todo : fileに保存
             
         }
 

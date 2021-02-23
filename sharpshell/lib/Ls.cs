@@ -14,7 +14,7 @@ namespace sharpshell.lib
         {
             var cleaned_path = path;
             
-            var regText = $"{whereami}/{{1,1}}(.*)";
+            var regText = $"{whereami}{{1,1}}(.*)";
             var reg = new Regex(regText, RegexOptions.Compiled);
             
             MatchCollection matches = reg.Matches(path);
@@ -40,8 +40,12 @@ namespace sharpshell.lib
             return Directory.GetFiles(path).ToList();
         }
 
-        public Dictionary<string, dynamic> GetFileAndDirectoryNameOnly(string whereami, string path, string args)
+        public Dictionary<string, dynamic> GetFileAndDirectoryNameOnly(string whereami, string path, List<string> ops)
         {
+            if (path == "")
+            {
+                path = whereami;
+            }
             // 自作してみる。
             var fileAndDirs = new Dictionary<string, dynamic>();
             var files = GetFiles(path);
@@ -64,6 +68,23 @@ namespace sharpshell.lib
             fileAndDirs["d"] = dirNames;
             
             return fileAndDirs;
+        }
+
+        public string GetFileAndDirectoryNameOnlyPrint(string whereami, string path, List<string> ops)
+        {
+            string resultText = "";
+            var fileAndDir = GetFileAndDirectoryNameOnly(whereami, path, ops);
+            foreach (var file in fileAndDir["f"])
+            {
+                resultText += $"{file}\n";
+            }
+            
+            foreach (var dir in fileAndDir["d"])
+            {
+                resultText += $"{dir}\n";
+            }
+            
+            return resultText;
         }
         
         

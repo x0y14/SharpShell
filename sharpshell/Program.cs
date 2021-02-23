@@ -10,6 +10,7 @@ namespace sharpshell
     {
         static void Main(string[] args)
         {
+            // todo : テストをかく。(切実)
             var sh = new SharpShell();
             
             // Console.WriteLine(sh.GenPrompt());
