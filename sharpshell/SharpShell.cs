@@ -2,8 +2,12 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+
+using sharpshell.lib;
+using sharpshell.process;
 using sharpshell.misc;
 using static sharpshell.Logger;
+
 using static sharpshell.misc.Util;
 
 namespace sharpshell
@@ -12,102 +16,68 @@ namespace sharpshell
     {
         private string UserName;
         private string WhereAmI;
+        private Dictionary<string, dynamic> Settings;
 
-        public SharpShell(Dictionary<string, dynamic> settings)
+        private ProcessManager _process;
+        
+        private JsonLoader.Loader _jsonLoader = new JsonLoader.Loader();
+
+        public SharpShell()
         {
             UserName = WhoAmI();
             WhereAmI = $"/Users/{WhoAmI()}";
-            // settings
-        }
-        
-        public string ProcessMaker(string bin_path, string args)
-        {
-            // return value includes last newline.
-            ProcessStartInfo process = new ProcessStartInfo(bin_path, args)
-            {
-                RedirectStandardOutput = true,
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
 
-            Process p = new Process {StartInfo = process};
-            p.Start();
-            return p.StandardOutput.ReadToEnd();
+            _process = new ProcessManager();
+
+            // settings
+
+            // if (settings.ContainsKey("welcome-message")){}
+        }
+
+        public void LoadSettings(string path)
+        {
+            
+            // Settings = settings;
         }
         
         // use /usr/bin/whoami
         public string WhoAmI()
         {
-            var _userName = ProcessMaker("/usr/bin/whoami", "");
-            ShellLogging(UserName, WhereAmI, "SharpShell.WhoAmI", "");
-            return RemoveLastNewLine(_userName);
+            var whoami = new WhoAmI();
+            return whoami.getUserName();
         }
 
         // use /bin/ls
-        public Dictionary<string, dynamic> Ls(string path="")
+        public Dictionary<string, dynamic> Ls(string path, string args)
         {
-            // does not support args
-            var fileAndDirs = new List<string>();
-            var files = new List<string>();
-            var dirs = new List<string>();
-            
-            
-            if (path == "")
-            {
-                path = WhereAmI;
-            }
-            
-            var result = ProcessMaker("/bin/ls", path);
-            result = RemoveLastNewLine(result);
-            var items = result.Split("\n");
-            
-            var fi = 0;
-            foreach (var f in items)
-            {
-                fi++;
-                fileAndDirs.Add(f);
-                
-                #if DEBUG
-                Console.WriteLine($"({fi}) {f}");
-                #endif
-                
-                if (System.IO.Directory.Exists($"{WhereAmI}/{f}"))
-                {
-                    dirs.Add(f);
-                }
-                else
-                {
-                    files.Add(f);
-                }
-            }
-            
-            ShellLogging(UserName, WhereAmI, "SharpShell.Ls", path);
-
-            var data = new Dictionary<string, dynamic>();
-            data["files"] = files;
-            data["dirs"] = dirs;
-            data["all"] = fileAndDirs;
-            return data;
+            var ls = new Ls();
+            return ls.GetFileAndDictionary(path, args);
         }
-
+        
         public bool Cd(string path)
         {
-            var thisFloorsItem = Ls();
-            if (thisFloorsItem["dirs"].Contains(path))
+            // boolにすべきか？
+            // 新しいpathを返すべきか
+            var state = false;
+            var _cd = new Cd();
+            try
             {
-                WhereAmI += $"/{path}";
+                WhereAmI = _cd.Move(WhereAmI, path);
+                state = true;
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine($"{path} is not dir");
+                Console.WriteLine(e);
             }
-            
-            return true;
+
+            return state;
         }
 
         public string Pwd()
         {
-            // testets
+            #if DEBUG
+            ShellLogging(UserName, WhereAmI, "SharpShell.Pwd", "");
+            #endif
             return WhereAmI;
         }
         
