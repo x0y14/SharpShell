@@ -1,3 +1,4 @@
+using System;
 using sharpshell.process;
 using sharpshell.misc;
 
@@ -11,10 +12,15 @@ namespace sharpshell.lib
             _process = new ProcessManager();
         }
         
-        public string getUserName()
+        public string GetUserNameUserBin()
         {
             var _userName = _process.MakeBinaryProcess("/usr/bin/whoami", "");
             return Util.RemoveLastNewLine(_userName);
+        }
+
+        public string GetUserName()
+        {
+            return Environment.UserName;
         }
     }
 }

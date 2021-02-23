@@ -1,6 +1,6 @@
 {
+  "welcome-message": "welcome to sharpshell!",
   "style": {
-      "welcome-message": "welcome to sharpshell!",
-      "prompt": "%whoami $ "
+      "prompt": "%whoami @ %whereami_full $ "
   }
 }

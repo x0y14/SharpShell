@@ -10,16 +10,19 @@ namespace sharpshell
     {
         static void Main(string[] args)
         {
-            var jl = new JsonLoader.Loader();
-            var settings = jl.LoadWithPath("/Users/x0y14/dev/csharp/sharpshell/sharpshell/setting.json");
             var sh = new SharpShell();
-            Console.WriteLine($"user name is `{sh.WhoAmI()}`");
-            // sh.Ls();
-            Console.WriteLine($"now {sh.Pwd()}");
-            sh.Cd("Qt");
-            Console.WriteLine($"moved {sh.Pwd()}");
-
-            Dictionary<string, dynamic> fd = sh.Ls(sh.Pwd(), "");
+            
+            // Console.WriteLine(sh.GenPrompt());
+            // sh.Cd("Qt");
+            // Console.WriteLine(sh.GenPrompt());
+            // Console.WriteLine(sh.Ls(".", ""));
+            //
+            // Console.WriteLine($"user name is `{sh.WhoAmI()}`");
+            // // sh.Ls();
+            // Console.WriteLine($"now `{sh.Pwd()}`");
+            // sh.Cd("Qt");
+            // Console.WriteLine($"moved `{sh.Pwd()}`");
+            // Console.WriteLine(Environment.UserName);
         }
     }
 }

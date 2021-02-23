@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace sharpshell.lib
 {
@@ -14,13 +16,14 @@ namespace sharpshell.lib
         {
             // todo : 相対ぱすに対応。
             // 現段階では、GetFileAndDirectoryNameOnlyにDirと認識されているもののみに反応する。(#1)
+            // とゆかクソ遅い。
             string newPath;
             var thisFloorsItem = _ls.GetFileAndDirectoryNameOnly(whereami, whereami, "");
 
             if (thisFloorsItem["d"].Contains(path))
             {
                 // (#1)
-                newPath = whereami + $"/{path}";
+                newPath = whereami + $"{path}/";
             }
             else
             {
@@ -28,6 +31,35 @@ namespace sharpshell.lib
             }
             
             return newPath;
+        }
+
+        public string MoveQuick(string whereami, string path)
+        {
+            // todo : 相対ぱすに対応。
+            // 超一部だけ相対ぱすに対応。
+            
+            // "Qt/" -> "Qt"
+            if (path.Substring(path.Length - 1, 1) == "/")
+                path = path.Substring(0, path.Length - 1);
+            
+            // 引数なし、動かない。
+            if (path == "" || path == ".")
+                return whereami;
+            
+            // 同じ階層の場合("./" or "." or "./////////////////////////...")
+            var thisFloorPathReg = new Regex(@"^\./+", RegexOptions.Compiled);
+            MatchCollection match = thisFloorPathReg.Matches(path);
+            if (match.Count == 1)
+            {
+                return whereami;
+            }
+            if (Directory.Exists($"{whereami}{path}/"))
+                return $"{whereami}{path}/";
+            if (File.Exists($"{whereami}{path}"))
+                throw new Exception($"{whereami}{path} is not Directory.");
+            
+            // 相対ぱす
+            return whereami;
         }
     }
 }
