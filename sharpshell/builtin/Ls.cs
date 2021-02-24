@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using sharpshell.misc;
 
 namespace sharpshell.builtin
 {
@@ -42,7 +43,7 @@ namespace sharpshell.builtin
 
         public Dictionary<string, dynamic> GetFileAndDirectoryNameOnly(string whereami, string path, List<string> ops)
         {
-            if (path == "")
+            if (Util.CheckVoidPath(path) == "")
             {
                 path = whereami;
             }
@@ -77,12 +78,17 @@ namespace sharpshell.builtin
             foreach (var file in fileAndDir["f"])
             {
                 resultText += $"{file}\n";
+                
             }
             
             foreach (var dir in fileAndDir["d"])
             {
                 resultText += $"{dir}\n";
             }
+
+            // 最後の改行だけ消す。
+            // もっといい方法あるよね。
+            resultText = resultText.Substring(0, resultText.Length - 1);
             
             return resultText;
         }

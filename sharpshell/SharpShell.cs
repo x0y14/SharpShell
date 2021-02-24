@@ -16,10 +16,6 @@ namespace sharpshell
 {
     public class SharpShell
     {
-        // 設定類 (別ファイルに分けてもいいかも。うん。ワタシもそう思う。)
-        private Dictionary<string, dynamic> Settings;
-        private string PromptStyle;
-        public List<string> Path;// パスを通すとかのパス。
         // モジュール類
         private Listener _listener;
         private Parser _parser;
@@ -66,11 +62,14 @@ namespace sharpshell
                 string userInput = _listener.Listening(GenPrompt());
                 Command cmd = _parser.ParseInputed(userInput);
                 Task task = _assignor.Assign(_workingDirectoryManager.Get(),userInput, cmd);
+                
                 if (task.TaskType == TaskType.BUILTIN)
                 {
                     var result = _builtinManager.AssignBuiltin(_workingDirectoryManager, task);
-                    Console.Write(result);
+                    if (result != "")
+                        Console.Write(result);
                 }
+                else if (task.TaskType == TaskType.NOOP) {}
                 else
                 {
                     Console.WriteLine("this task is not supporting.");

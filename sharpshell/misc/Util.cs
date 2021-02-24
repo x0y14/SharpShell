@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace sharpshell.misc
 {
@@ -42,5 +43,22 @@ namespace sharpshell.misc
                 return path;
             return $"{path}/";
         }
+
+        public static string CheckVoidPath(string path)
+        {
+            if (path == "" || path == ".")
+                return "";
+            
+            // 同じ階層の場合("./" or "." or "./////////////////////////...")
+            var thisFloorPathReg = new Regex(@"^\./+", RegexOptions.Compiled);
+            MatchCollection match = thisFloorPathReg.Matches(path);
+            if (match.Count == 1)
+            {
+                return "";
+            }
+
+            return path;
+        }
+        
     }
 }

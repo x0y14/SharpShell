@@ -10,33 +10,55 @@ namespace sharpshell.builtin
     public class BuiltinManager
     {
         public BuiltinManager(){}
-        public static readonly List<string> SupportingCommands = new List<string>(){"ls", "cat", "cd", "pwd", "whoami"};// ?
+        public static readonly List<string> SupportingCommands = new List<string>(){"ls", "cat", "cd", "pwd", "whoami", "clear"};// ?
 
         public static bool IsSupporting(string cmd)
         {
             return SupportingCommands.Contains(cmd);
         }
+
+        private string DoInSandBox(Func<WorkingDirectoryManager, Task, string> job, WorkingDirectoryManager wdb, Task task)
+        {
+            // 超厨二病だけどまぁやってることは外れてはいない気がするのでよしとする.
+            string result;
+            try
+            {
+                result = job(wdb, task);
+            }
+            catch (Exception e)
+            {
+                result = e.Message;
+            }
+
+            return result;
+        }
         
         public string AssignBuiltin(WorkingDirectoryManager _workingDirectoryManager, Task task)
         {
-            // ビルトインの割り当て"ls"しかしてないし、プロセスマネジャの設定もしてないので"ls"しか動かん。
             switch (task.Command.Fn)
             {
                 case "ls":
                 {
-                    return Ls(_workingDirectoryManager, task);
+                    return $"{DoInSandBox(Ls, _workingDirectoryManager, task)}\n";
                 }
                 case "pwd":
                 {
-                    return $"{Pwd(_workingDirectoryManager, task)}\n";
+                    return $"{DoInSandBox(Pwd, _workingDirectoryManager, task)}\n";
                 }
-
+                case "whoami":
+                {
+                    return $"{WhoAmI()}\n";
+                }
                 case "cd":
                 {
-                    
-                    return "";
+                    // 何も表示しないので改行はつけない
+                    return $"{DoInSandBox(Cd, _workingDirectoryManager, task)}";
                 }
-                
+                case "clear":
+                {
+                    // 何も表示しないので改行はつけない
+                    return $"{DoInSandBox(Clear, _workingDirectoryManager, task)}";
+                }
             }
             return $"error: `{task.Command.Fn}`\nmsg: this built-in function is not assigned yet.\n";
         }
@@ -47,6 +69,14 @@ namespace sharpshell.builtin
         {
             var whoami = new WhoAmI();
             return whoami.GetUserName();
+        }
+        
+        // --------------------------------------------------------------------------------------
+
+        public string Clear(WorkingDirectoryManager wdm, Task task)
+        {
+            Console.Clear();
+            return "";
         }
         
         public string Ls(WorkingDirectoryManager wdm, Task task)
@@ -85,10 +115,13 @@ namespace sharpshell.builtin
             
             var cd = new Cd();
             // WhereAmI = cd.Move(WhereAmI, path);// 時間かかる。
-            
-            wdm.Set(cd.MoveQuick(wdm.Get(), _args));
+
+            // Console.WriteLine($"[INFO CD] old path: {wdm.Get()}");
+            var newPath = cd.MoveQuick(wdm.Get(), _args);
+            wdm.Set(newPath);
+            // Console.WriteLine($"[INFO CD] new path: {newPath}");
             // WhereAmI = cd.MoveQuick(wdm.Get(), _args);
-            return wdm.Get();
+            return "";
         }
         
         public string Pwd(WorkingDirectoryManager wdm, Task task)

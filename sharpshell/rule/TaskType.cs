@@ -4,6 +4,7 @@ namespace sharpshell.rule
     {
         BUILTIN,
         UNKNOWN,
-        NOTFOUND
+        NOTFOUND,
+        NOOP,
     }
 }

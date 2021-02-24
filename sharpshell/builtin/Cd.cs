@@ -60,7 +60,8 @@ namespace sharpshell.builtin
                 throw new Exception($"{whereami}{path} is not Directory.");
             
             // 相対ぱす
-            return whereami;
+
+            throw new Exception($"not found: {path}");
         }
     }
 }

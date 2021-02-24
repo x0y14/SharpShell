@@ -49,6 +49,10 @@ namespace sharpshell.mod
 
         public Task Assign(string whereAmI, string raw, Command cmd)
         {
+            // 改行だけの場合はNOOP(何もしない)を返す。
+            if (cmd.Fn.Equals("") || cmd.Fn.Equals("\t") || cmd.Fn.Equals("\n"))
+                return new Task(TaskType.NOOP, raw, cmd);
+            
             // 1. 組み込み
             if (BuiltinManager.IsSupporting(cmd.Fn))
                 return new Task(TaskType.BUILTIN, raw, cmd);
