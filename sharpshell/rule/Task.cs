@@ -6,10 +6,12 @@ namespace sharpshell.rule
         public readonly TaskType TaskType;
         public readonly Command Command;
         public readonly string BinPath;
+        public readonly string RawInput;
 
-        public Task(TaskType type, Command cmd, string binPath="")
+        public Task(TaskType type, string raw, Command cmd, string binPath="")
         {
             TaskType = type;
+            RawInput = raw;
             Command = cmd;
             BinPath = binPath;
         }

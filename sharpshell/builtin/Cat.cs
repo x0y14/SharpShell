@@ -1,4 +1,4 @@
-namespace sharpshell.lib
+namespace sharpshell.builtin
 {
     public class Cat
     {

@@ -9,19 +9,12 @@ namespace sharpshell.mod
     /// </summary>
     public class Listener
     {
-        private Parser _parser;
+        public Listener() {}
 
-        public Listener()
-        {
-            _parser = new Parser();
-        }
-
-        public Command Listening(string prompt)
+        public string Listening(string prompt)
         {
             Console.Write(prompt);
-            // なぜか知らんが最後の改行は含まれない。
-            var line = System.Console.ReadLine();
-            return _parser.ParseInputed(line);
+            return System.Console.ReadLine();;
         }
     }
 }

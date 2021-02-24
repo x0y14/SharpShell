@@ -2,7 +2,7 @@ using System;
 using sharpshell.process;
 using sharpshell.misc;
 
-namespace sharpshell.lib
+namespace sharpshell.builtin
 {
     public class WhoAmI
     {

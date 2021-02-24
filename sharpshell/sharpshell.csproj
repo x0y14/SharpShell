@@ -9,4 +9,8 @@
       <PackageReference Include="JsonLoader" Version="1.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="lib" />
+    </ItemGroup>
+
 </Project>

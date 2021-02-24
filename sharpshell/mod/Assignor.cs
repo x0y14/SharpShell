@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using sharpshell.rule;
+using sharpshell.builtin;
 
 namespace sharpshell.mod
 {
@@ -34,14 +35,11 @@ namespace sharpshell.mod
         /// 
         /// </summary>
 
-        private string WhereAmI;
-        private List<string> ShortCutPath;
-        private List<string> BuiltinCmd;
-        public Assignor(string whereami, List<string> path, List<string> builtin)
+        private readonly List<string> ShortCutPath;
+
+        public Assignor(List<string> paths)
         {
-            WhereAmI = whereami;
-            ShortCutPath = path;
-            BuiltinCmd = builtin;
+            ShortCutPath = paths;
         }
 
         private bool SearchBin(string path, string bin)
@@ -49,24 +47,24 @@ namespace sharpshell.mod
             return Directory.GetFiles(path).Contains(bin);
         }
 
-        public Task Assign(Command cmd)
+        public Task Assign(string whereAmI, string raw, Command cmd)
         {
             // 1. 組み込み
-            if (BuiltinCmd.Contains(cmd.Fn))
-                return new Task(TaskType.BUILTIN, cmd);
+            if (BuiltinManager.IsSupporting(cmd.Fn))
+                return new Task(TaskType.BUILTIN, raw, cmd);
 
             // 2. パス
             foreach (var shortcutPath in ShortCutPath)
             {
                 if (SearchBin(shortcutPath, cmd.Fn))
-                    return new Task(TaskType.UNKNOWN, cmd, $"{shortcutPath}{cmd.Fn}");
+                    return new Task(TaskType.UNKNOWN, raw, cmd, $"{shortcutPath}{cmd.Fn}");
             }
             
             // 3. 現在のパス
-            if (SearchBin(WhereAmI, cmd.Fn))
-                return new Task(TaskType.UNKNOWN, cmd, $"{WhereAmI}{cmd.Fn}");
+            if (SearchBin(whereAmI, cmd.Fn))
+                return new Task(TaskType.UNKNOWN, raw, cmd, $"{whereAmI}{cmd.Fn}");
             
-            return new Task(TaskType.NOTFOUND, cmd);
+            return new Task(TaskType.NOTFOUND, raw, cmd);
 
         }
         
