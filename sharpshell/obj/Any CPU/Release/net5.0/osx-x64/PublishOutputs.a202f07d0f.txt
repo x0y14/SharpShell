@@ -1,6 +1,0 @@
-/Users/x0y14/dev/csharp/sharpshell/sharpshell/bin/Release/net5.0/publish/sharpshell
-/Users/x0y14/dev/csharp/sharpshell/sharpshell/bin/Release/net5.0/publish/sharpshell.dll
-/Users/x0y14/dev/csharp/sharpshell/sharpshell/bin/Release/net5.0/publish/sharpshell.deps.json
-/Users/x0y14/dev/csharp/sharpshell/sharpshell/bin/Release/net5.0/publish/sharpshell.runtimeconfig.json
-/Users/x0y14/dev/csharp/sharpshell/sharpshell/bin/Release/net5.0/publish/sharpshell.pdb
-/Users/x0y14/dev/csharp/sharpshell/sharpshell/bin/Release/net5.0/publish/JsonLoader.dll
