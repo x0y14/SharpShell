@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "/u1ljtpqtlJ6d81gDPBq/ZY+l82jd/ors2XjnbiP3AVslyqsl0XMe/cgSzUkK6Rk3gmE5M8AQ2zCBIGQ6E5y2g==",
+  "dgSpecHash": "RuSZQK+3VkXunFZy+myxLIqUiY0v/jlNkAop0KkmWMZsvJEwi5Mi4ZM+wStCD/AK9tbRYAAPlTme5dGa2pGu7A==",
   "success": true,
   "projectFilePath": "/Users/x0y14/dev/csharp/sharpshell/sharpshell/sharpshell.csproj",
   "expectedPackageFiles": [
-    "/Users/x0y14/.nuget/packages/jsonloader/1.0.3/jsonloader.1.0.3.nupkg.sha512"
+    "/Users/x0y14/.nuget/packages/jsonloader/1.0.3/jsonloader.1.0.3.nupkg.sha512",
+    "/Users/x0y14/.nuget/packages/microsoft.netcore.app.host.osx-x64/5.0.2/microsoft.netcore.app.host.osx-x64.5.0.2.nupkg.sha512"
   ],
   "logs": []
 }

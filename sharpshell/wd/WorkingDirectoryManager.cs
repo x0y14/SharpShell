@@ -7,6 +7,7 @@ namespace sharpshell.wd
         public WorkingDirectoryManager(string now)
         {
             NowPath = now;
+            // ^((?:\.\.\/)+)(.*)$
         }
 
         public string Get()

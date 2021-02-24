@@ -46,7 +46,7 @@ namespace sharpshell.setting
                     // JsonLoaderではjsonにおける配列(list)はList<object>になっているので、無理矢理List<string>へ変換
                      paths = Util.ConvertPathList(UserSettings["path"]);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new Exception("list of path can not convert, object to string");
                 }
