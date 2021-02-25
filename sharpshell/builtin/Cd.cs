@@ -2,66 +2,67 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using sharpshell.rule;
+using sharpshell.virtualpath;
 
 namespace sharpshell.builtin
 {
     public class Cd
     {
+        /// <summary>
+        /// CDはオプションチェックの関数！！！
+        /// </summary>
         private Ls _ls;
-        public Cd()
+        private VirtualPathManager _virtualPathManager;
+        public Cd(VirtualPathManager wdm)
         {
             _ls = new Ls();
+            _virtualPathManager = wdm;
         }
         
-        public string Move(string whereami, string path)
+        public string MoveQuick(string path)
         {
-            // todo : 相対ぱすに対応。
-            // 現段階では、GetFileAndDirectoryNameOnlyにDirと認識されているもののみに反応する。(#1)
-            // とゆかクソ遅い。
-            string newPath;
-            var thisFloorsItem = _ls.GetFileAndDirectoryNameOnly(whereami, whereami, new List<string>());
-
-            if (thisFloorsItem["d"].Contains(path))
-            {
-                // (#1)
-                newPath = whereami + $"{path}/";
-            }
-            else
-            {
-                throw new Exception($"{path} is not dir");
-            }
-            
-            return newPath;
-        }
-
-        public string MoveQuick(string whereami, string path)
-        {
-            // todo : 相対ぱすに対応。
-            // 超一部だけ相対ぱすに対応。
-            
-            // "Qt/" -> "Qt"
-            if (path.Substring(path.Length - 1, 1) == "/")
-                path = path.Substring(0, path.Length - 1);
+            // 末尾が/だった場合、それを消す。
             
             // 引数なし、動かない。
-            if (path == "" || path == ".")
-                return whereami;
-            
-            // 同じ階層の場合("./" or "." or "./////////////////////////...")
-            var thisFloorPathReg = new Regex(@"^\./+", RegexOptions.Compiled);
-            MatchCollection match = thisFloorPathReg.Matches(path);
-            if (match.Count == 1)
-            {
-                return whereami;
-            }
-            if (Directory.Exists($"{whereami}{path}/"))
-                return $"{whereami}{path}/";
-            if (File.Exists($"{whereami}{path}"))
-                throw new Exception($"{whereami}{path} is not Directory.");
-            
+            if (path == "")
+                return _virtualPathManager.GetWorkingDirectoryAsString();
+
+            var virtualPath = _virtualPathManager.AnalyzePath(path);
+            if (virtualPath.Type == VirtualPathType.DIRECTORY)
+                return virtualPath.AbsolutePath;
+            if (virtualPath.Type == VirtualPathType.FILE)
+                throw new Exception($"not a directory: {path}\n");
+            throw new Exception($"not found: {path}\n");
+
+
+            // if (path == "..")
+            // {
+            //     _workingDirectoryManager.GoUp();
+            //     return;
+            // }
+
+            // if (_workingDirectoryManager.IsExistFile(path))
+            //     throw new Exception($"not a directory: {path}");
+            //
+            // try
+            // {
+            //     _workingDirectoryManager.GoDown(path);
+            //     return;
+            // }
+            // catch (Exception e)
+            // {
+            //     Console.WriteLine(e);
+            //     throw new Exception($"not a directory: {path}");
+            // }
+
+            // 同じ階層に配置されたディレクトリを指定された場合。
+            // if (Directory.Exists($"{_workingDirectoryManager.GetWorkingDirectoryAsString()}/{path}"))
+            //     Console.WriteLine("");
+            // return $"{_workingDirectoryManager.GetWorkingDirectoryAsString()}/{path}";
+            // 
             // 相対ぱす
 
-            throw new Exception($"not found: {path}");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace sharpshell.builtin
         {
             var cleaned_path = path;
             
-            var regText = $"{whereami}{{1,1}}(.*)";
+            var regText = $"{whereami}/{{1,1}}(.*)";
             var reg = new Regex(regText, RegexOptions.Compiled);
             
             MatchCollection matches = reg.Matches(path);

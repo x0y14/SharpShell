@@ -11,8 +11,7 @@ namespace sharpshell
         static void Main(string[] args)
         {
             // todo : テストをかく。(切実)
-            var sh = new SharpShell();
-            
+            var sh = new SharpShell(Environment.GetEnvironmentVariable("HOME"));
             // Console.WriteLine(sh.GenPrompt());
             // sh.Cd("Qt");
             // Console.WriteLine(sh.GenPrompt());

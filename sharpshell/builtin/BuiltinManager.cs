@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using sharpshell.rule;
-using sharpshell.wd;
+using sharpshell.virtualpath;
 
 namespace sharpshell.builtin
 {
@@ -17,7 +17,7 @@ namespace sharpshell.builtin
             return SupportingCommands.Contains(cmd);
         }
 
-        private string DoInSandBox(Func<WorkingDirectoryManager, Task, string> job, WorkingDirectoryManager wdb, Task task)
+        private string DoInSandBox(Func<VirtualPathManager, Task, string> job, VirtualPathManager wdb, Task task)
         {
             // 超厨二病だけどまぁやってることは外れてはいない気がするのでよしとする.
             string result;
@@ -33,17 +33,17 @@ namespace sharpshell.builtin
             return result;
         }
         
-        public string AssignBuiltin(WorkingDirectoryManager _workingDirectoryManager, Task task)
+        public string AssignBuiltin(VirtualPathManager _virtualPathManager, Task task)
         {
             switch (task.Command.Fn)
             {
                 case "ls":
                 {
-                    return $"{DoInSandBox(Ls, _workingDirectoryManager, task)}\n";
+                    return $"{DoInSandBox(Ls, _virtualPathManager, task)}\n";
                 }
                 case "pwd":
                 {
-                    return $"{DoInSandBox(Pwd, _workingDirectoryManager, task)}\n";
+                    return $"{DoInSandBox(Pwd, _virtualPathManager, task)}\n";
                 }
                 case "whoami":
                 {
@@ -52,15 +52,22 @@ namespace sharpshell.builtin
                 case "cd":
                 {
                     // 何も表示しないので改行はつけない
-                    return $"{DoInSandBox(Cd, _workingDirectoryManager, task)}";
+                    return $"{DoInSandBox(Cd, _virtualPathManager, task)}";
                 }
                 case "clear":
                 {
                     // 何も表示しないので改行はつけない
-                    return $"{DoInSandBox(Clear, _workingDirectoryManager, task)}";
+                    return $"{DoInSandBox(Clear, _virtualPathManager, task)}";
                 }
             }
             return $"error: `{task.Command.Fn}`\nmsg: this built-in function is not assigned yet.\n";
+        }
+
+        public string GetFirstArgument(List<string> args)
+        {
+            if (!args.Any())
+                return "";
+            return args[0];
         }
         
         // --------------------------------------------------------------------------------------
@@ -73,60 +80,41 @@ namespace sharpshell.builtin
         
         // --------------------------------------------------------------------------------------
 
-        public string Clear(WorkingDirectoryManager wdm, Task task)
+        public string Clear(VirtualPathManager vpm, Task task)
         {
             Console.Clear();
             return "";
         }
         
-        public string Ls(WorkingDirectoryManager wdm, Task task)
+        public string Ls(VirtualPathManager vpm, Task task)
         {
             
-            // sortが必要そう。
-            // なんか他のだと普通、横に並べてる。
-            string _args;
-            
-            // 期待するもの
-            // List<string> args, args.Count() => 1
-            
-            // 引数なしの場合
-            if (!task.Command.Args.Any())
-                _args = "";
-            // 引数多すぎ問題
-            else if (task.Command.Args.Count > 1)
+            if (task.Command.Args.Count > 1)
                 throw new Exception("too many arguments");
-            else
-                _args = task.Command.Args[0];
 
+            var _args = GetFirstArgument(task.Command.Args);
+            
             var ls = new Ls();
-            return ls.GetFileAndDirectoryNameOnlyPrint(wdm.Get(), _args, task.Command.Ops);
+            return ls.GetFileAndDirectoryNameOnlyPrint(vpm.GetWorkingDirectoryAsString(), _args, task.Command.Ops);
         }
         
-        public string Cd(WorkingDirectoryManager wdm, Task task)
+        public string Cd(VirtualPathManager vpm, Task task)
         {
-            // todo : 引数チェック関数の導入
-            string _args;
-            if (!task.Command.Args.Any())
-                _args = "";
-            // 引数多すぎ問題
-            else if (task.Command.Args.Count > 1)
+            // ここはあくまで、引数、オプションチェックの場所。
+            if (task.Command.Args.Count > 1)
                 throw new Exception("too many arguments");
-            _args = task.Command.Args[0];
+            var _args = GetFirstArgument(task.Command.Args);
             
-            var cd = new Cd();
-            // WhereAmI = cd.Move(WhereAmI, path);// 時間かかる。
-
-            // Console.WriteLine($"[INFO CD] old path: {wdm.Get()}");
-            var newPath = cd.MoveQuick(wdm.Get(), _args);
-            wdm.Set(newPath);
-            // Console.WriteLine($"[INFO CD] new path: {newPath}");
-            // WhereAmI = cd.MoveQuick(wdm.Get(), _args);
+            var cd = new Cd(vpm);
+            cd.MoveQuick(_args);// オプションなしの場合の動き。
+            
+            // vpm.SetAbsolutePath(newPath);// これ消したい。ここから叩くようなものではない
             return "";
         }
         
-        public string Pwd(WorkingDirectoryManager wdm, Task task)
+        public string Pwd(VirtualPathManager vpm, Task task)
         {
-            return wdm.Get();
+            return vpm.GetWorkingDirectoryAsString();
         }
 
         public string Cat(string path)
