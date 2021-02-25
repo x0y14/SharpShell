@@ -1,6 +1,7 @@
 using System;
 using sharpshell.process;
 using sharpshell.misc;
+using sharpshell.rule;
 
 namespace sharpshell.builtin
 {
@@ -14,7 +15,7 @@ namespace sharpshell.builtin
         
         public string GetUserNameUserBin()
         {
-            var _userName = _process.MakeBinaryProcess("/usr/bin/whoami", "");
+            var _userName = _process.MakeBinaryProcess("/usr/bin/whoami", new Task());
             return Util.RemoveLastNewLine(_userName);
         }
 

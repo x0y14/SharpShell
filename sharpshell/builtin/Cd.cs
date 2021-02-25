@@ -12,11 +12,9 @@ namespace sharpshell.builtin
         /// <summary>
         /// CDはオプションチェックの関数！！！
         /// </summary>
-        private Ls _ls;
         private VirtualPathManager _virtualPathManager;
         public Cd(VirtualPathManager wdm)
         {
-            _ls = new Ls();
             _virtualPathManager = wdm;
         }
         

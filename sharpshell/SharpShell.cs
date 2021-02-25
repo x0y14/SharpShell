@@ -23,7 +23,7 @@ namespace sharpshell
         private SettingsManager _settingsManager;
         private VirtualPathManager _virtualPathManager;
         private BuiltinManager _builtinManager;
-        // private ProcessManager _process;
+        private ProcessManager _process;
         // その他
         private JsonLoader.Loader _jsonLoader = new JsonLoader.Loader();
 
@@ -36,7 +36,7 @@ namespace sharpshell
             _parser = new Parser();
             _assignor = new Assignor(_settingsManager.GetPath());
             _builtinManager = new BuiltinManager();
-            // _process = new ProcessManager();
+            _process = new ProcessManager();
             Init();
             LineStreaming();
         }
@@ -59,11 +59,17 @@ namespace sharpshell
             {
                 string userInput = _listener.Listening(GenPrompt());
                 Command cmd = _parser.ParseInputed(userInput);
-                Task task = _assignor.Assign(_virtualPathManager.GetWorkingDirectoryAsString(),userInput, cmd);
+                Task task = _assignor.Assign(_virtualPathManager,userInput, cmd);
                 
                 if (task.TaskType == TaskType.BUILTIN)
                 {
                     var result = _builtinManager.AssignBuiltin(_virtualPathManager, task);
+                    if (result != "")
+                        Console.Write(result);
+                }
+                else if (task.TaskType == TaskType.UNKNOWN)
+                {
+                    var result = _process.MakeBinaryProcess(task.BinPath, task);
                     if (result != "")
                         Console.Write(result);
                 }

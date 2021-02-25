@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using sharpshell.rule;
 using sharpshell.builtin;
+using sharpshell.virtualpath;
 
 namespace sharpshell.mod
 {
@@ -47,9 +48,9 @@ namespace sharpshell.mod
             return Directory.GetFiles(path).Contains(bin);
         }
 
-        public Task Assign(string whereAmI, string raw, Command cmd)
+        public Task Assign(VirtualPathManager _virtualPathManager, string raw, Command cmd)
         {
-            // 改行だけの場合はNOOP(何もしない)を返す。
+            // 改行だけの場合はNOOP(何もしない)を返す.
             if (cmd.Fn.Equals("") || cmd.Fn.Equals("\t") || cmd.Fn.Equals("\n"))
                 return new Task(TaskType.NOOP, raw, cmd);
             
@@ -61,12 +62,13 @@ namespace sharpshell.mod
             foreach (var shortcutPath in ShortCutPath)
             {
                 if (SearchBin(shortcutPath, cmd.Fn))
-                    return new Task(TaskType.UNKNOWN, raw, cmd, $"{shortcutPath}{cmd.Fn}");
+                    return new Task(TaskType.UNKNOWN, raw, cmd, $"{shortcutPath}/{cmd.Fn}");
             }
-            
-            // 3. 現在のパス
-            if (SearchBin(whereAmI, cmd.Fn))
-                return new Task(TaskType.UNKNOWN, raw, cmd, $"{whereAmI}{cmd.Fn}");
+
+            // 3. 実行ファイル
+            var virtualPath = _virtualPathManager.AnalyzePath(cmd.Fn);
+            if (virtualPath.Type == VirtualPathType.FILE)
+                return new Task(TaskType.UNKNOWN, raw, cmd, virtualPath.AbsolutePath);
             
             return new Task(TaskType.NOTFOUND, raw, cmd);
 
