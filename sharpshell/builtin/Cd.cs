@@ -30,7 +30,9 @@ namespace sharpshell.builtin
 
             var virtualPath = _virtualPathManager.AnalyzePath(path);
             if (virtualPath.Type == VirtualPathType.DIRECTORY)
-                return virtualPath.AbsolutePath;
+            {
+                return _virtualPathManager.SetAbsolutePath(virtualPath.AbsolutePath);
+            }
             if (virtualPath.Type == VirtualPathType.FILE)
                 throw new Exception($"not a directory: {path}\n");
             throw new Exception($"not found: {path}\n");
