@@ -61,8 +61,10 @@ namespace sharpshell.mod
             // 2. パス
             foreach (var shortcutPath in ShortCutPath)
             {
-                if (SearchBin(shortcutPath, cmd.Fn))
-                    return new Task(TaskType.UNKNOWN, raw, cmd, $"{shortcutPath}/{cmd.Fn}");
+                var unknown = VirtualPathManager.IsExist($"{shortcutPath}/{cmd.Fn}");
+                if (unknown.Type == VirtualPathType.FILE)
+                // if (SearchBin(shortcutPath, cmd.Fn))
+                return new Task(TaskType.UNKNOWN, raw, cmd, unknown.AbsolutePath);
             }
 
             // 3. 実行ファイル

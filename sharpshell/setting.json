@@ -4,6 +4,8 @@
       "prompt": "%whoami @ %whereami_full $ "
   },
   "path": [
-    "/Users/x0y14/dev/go/"
+    "/Users/x0y14/dev/go/",
+    "/Users/x0y14/dev/go/shortcut",
+    "/usr/local/bin/"
   ]
 }
