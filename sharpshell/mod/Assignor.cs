@@ -48,15 +48,15 @@ namespace sharpshell.mod
             return Directory.GetFiles(path).Contains(bin);
         }
 
-        public Task Assign(VirtualPathManager _virtualPathManager, string raw, Command cmd)
+        public ShellTask Assign(VirtualPathManager _virtualPathManager, string raw, Command cmd)
         {
             // 改行だけの場合はNOOP(何もしない)を返す.
             if (cmd.Fn.Equals("") || cmd.Fn.Equals("\t") || cmd.Fn.Equals("\n"))
-                return new Task(TaskType.NOOP, raw, cmd);
+                return new ShellTask(ShellTaskType.NOOP, raw, cmd);
             
             // 1. 組み込み
             if (BuiltinManager.IsSupporting(cmd.Fn))
-                return new Task(TaskType.BUILTIN, raw, cmd);
+                return new ShellTask(ShellTaskType.BUILTIN, raw, cmd);
 
             // 2. パス
             foreach (var shortcutPath in ShortCutPath)
@@ -64,15 +64,15 @@ namespace sharpshell.mod
                 var unknown = VirtualPathManager.IsExist($"{shortcutPath}/{cmd.Fn}");
                 if (unknown.Type == VirtualPathType.FILE)
                 // if (SearchBin(shortcutPath, cmd.Fn))
-                return new Task(TaskType.UNKNOWN, raw, cmd, unknown.AbsolutePath);
+                return new ShellTask(ShellTaskType.UNKNOWN, raw, cmd, unknown.AbsolutePath);
             }
 
             // 3. 実行ファイル
             var virtualPath = _virtualPathManager.AnalyzePath(cmd.Fn);
             if (virtualPath.Type == VirtualPathType.FILE)
-                return new Task(TaskType.UNKNOWN, raw, cmd, virtualPath.AbsolutePath);
+                return new ShellTask(ShellTaskType.UNKNOWN, raw, cmd, virtualPath.AbsolutePath);
             
-            return new Task(TaskType.NOTFOUND, raw, cmd);
+            return new ShellTask(ShellTaskType.NOTFOUND, raw, cmd);
 
         }
         

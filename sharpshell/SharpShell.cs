@@ -31,7 +31,7 @@ namespace sharpshell
         public SharpShell(string entryPoint)
         {
             _virtualPathManager = new VirtualPathManager(entryPoint);
-            _settingsManager = new SettingsManager("/Users/x0y14/dev/csharp/sharpshell/sharpshell/setting.json");
+            _settingsManager = new SettingsManager($"{entryPoint}/.sharpshell.json");
             _listener = new Listener();
             _parser = new Parser();
             _assignor = new Assignor(_settingsManager.GetPath());
@@ -59,21 +59,21 @@ namespace sharpshell
             {
                 string userInput = _listener.Listening(GenPrompt());
                 Command cmd = _parser.ParseInputed(userInput);
-                Task task = _assignor.Assign(_virtualPathManager,userInput, cmd);
+                ShellTask task = _assignor.Assign(_virtualPathManager,userInput, cmd);
                 
-                if (task.TaskType == TaskType.BUILTIN)
+                if (task.TaskType == ShellTaskType.BUILTIN)
                 {
                     var result = _builtinManager.AssignBuiltin(_virtualPathManager, task);
                     if (result != "")
                         Console.Write(result);
                 }
-                else if (task.TaskType == TaskType.UNKNOWN)
+                else if (task.TaskType == ShellTaskType.UNKNOWN)
                 {
-                    var result = _process.MakeBinaryProcess(task.BinPath, task);
+                    var result = _process.MakeBinaryProcess2(task);
                     if (result != "")
                         Console.Write(result);
                 }
-                else if (task.TaskType == TaskType.NOOP) {}
+                else if (task.TaskType == ShellTaskType.NOOP) {}
                 else
                 {
                     Console.WriteLine("this task is not supporting.");

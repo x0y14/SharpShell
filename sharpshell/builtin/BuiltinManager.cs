@@ -17,13 +17,13 @@ namespace sharpshell.builtin
             return SupportingCommands.Contains(cmd);
         }
 
-        private string DoInSandBox(Func<VirtualPathManager, Task, string> job, VirtualPathManager wdb, Task task)
+        private string DoInSandBox(Func<VirtualPathManager, ShellTask, string> job, VirtualPathManager wdb, ShellTask Shelltask)
         {
             // 超厨二病だけどまぁやってることは外れてはいない気がするのでよしとする.
             string result;
             try
             {
-                result = job(wdb, task);
+                result = job(wdb, Shelltask);
             }
             catch (Exception e)
             {
@@ -33,17 +33,17 @@ namespace sharpshell.builtin
             return result;
         }
         
-        public string AssignBuiltin(VirtualPathManager _virtualPathManager, Task task)
+        public string AssignBuiltin(VirtualPathManager _virtualPathManager, ShellTask Shelltask)
         {
-            switch (task.Command.Fn)
+            switch (Shelltask.Command.Fn)
             {
                 case "ls":
                 {
-                    return $"{DoInSandBox(Ls, _virtualPathManager, task)}\n";
+                    return $"{DoInSandBox(Ls, _virtualPathManager, Shelltask)}\n";
                 }
                 case "pwd":
                 {
-                    return $"{DoInSandBox(Pwd, _virtualPathManager, task)}\n";
+                    return $"{DoInSandBox(Pwd, _virtualPathManager, Shelltask)}\n";
                 }
                 case "whoami":
                 {
@@ -52,15 +52,15 @@ namespace sharpshell.builtin
                 case "cd":
                 {
                     // 何も表示しないので改行はつけない
-                    return $"{DoInSandBox(Cd, _virtualPathManager, task)}";
+                    return $"{DoInSandBox(Cd, _virtualPathManager, Shelltask)}";
                 }
                 case "clear":
                 {
                     // 何も表示しないので改行はつけない
-                    return $"{DoInSandBox(Clear, _virtualPathManager, task)}";
+                    return $"{DoInSandBox(Clear, _virtualPathManager, Shelltask)}";
                 }
             }
-            return $"error: `{task.Command.Fn}`\nmsg: this built-in function is not assigned yet.\n";
+            return $"error: `{Shelltask.Command.Fn}`\nmsg: this built-in function is not assigned yet.\n";
         }
 
         public string GetFirstArgument(List<string> args)
@@ -80,30 +80,30 @@ namespace sharpshell.builtin
         
         // --------------------------------------------------------------------------------------
 
-        public string Clear(VirtualPathManager vpm, Task task)
+        public string Clear(VirtualPathManager vpm, ShellTask Shelltask)
         {
             Console.Clear();
             return "";
         }
         
-        public string Ls(VirtualPathManager vpm, Task task)
+        public string Ls(VirtualPathManager vpm, ShellTask Shelltask)
         {
             
-            if (task.Command.Args.Count > 1)
+            if (Shelltask.Command.Args.Count > 1)
                 throw new Exception("too many arguments");
 
-            var _args = GetFirstArgument(task.Command.Args);
+            var _args = GetFirstArgument(Shelltask.Command.Args);
             
             var ls = new Ls();
-            return ls.GetFileAndDirectoryNameOnlyPrint(vpm.GetWorkingDirectoryAsString(), _args, task.Command.Ops);
+            return ls.GetFileAndDirectoryNameOnlyPrint(vpm.GetWorkingDirectoryAsString(), _args, Shelltask.Command.Ops);
         }
         
-        public string Cd(VirtualPathManager vpm, Task task)
+        public string Cd(VirtualPathManager vpm, ShellTask Shelltask)
         {
             // ここはあくまで、引数、オプションチェックの場所。
-            if (task.Command.Args.Count > 1)
+            if (Shelltask.Command.Args.Count > 1)
                 throw new Exception("too many arguments");
-            var _args = GetFirstArgument(task.Command.Args);
+            var _args = GetFirstArgument(Shelltask.Command.Args);
             
             var cd = new Cd(vpm);
             cd.MoveQuick(_args);// オプションなしの場合の動き。
@@ -112,7 +112,7 @@ namespace sharpshell.builtin
             return "";
         }
         
-        public string Pwd(VirtualPathManager vpm, Task task)
+        public string Pwd(VirtualPathManager vpm, ShellTask Shelltask)
         {
             return vpm.GetWorkingDirectoryAsString();
         }

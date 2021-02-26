@@ -1,6 +1,6 @@
 namespace sharpshell.rule
 {
-    public enum TaskType
+    public enum ShellTaskType
     {
         BUILTIN,
         UNKNOWN,

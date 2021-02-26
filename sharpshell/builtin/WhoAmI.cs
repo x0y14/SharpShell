@@ -15,7 +15,13 @@ namespace sharpshell.builtin
         
         public string GetUserNameUserBin()
         {
-            var _userName = _process.MakeBinaryProcess("/usr/bin/whoami", new Task());
+            var whoami = new ShellTask(
+                ShellTaskType.BUILTIN,
+                "",
+                new Command(),
+                "/usr/bin/whoami"
+                );
+            var _userName = _process.MakeBinaryProcess(whoami);
             return Util.RemoveLastNewLine(_userName);
         }
 
