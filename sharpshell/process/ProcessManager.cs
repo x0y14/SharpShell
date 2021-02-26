@@ -60,7 +60,6 @@ namespace sharpshell.process
                 {
                     Console.WriteLine($"exited");
                     // プロセスが終了すると呼ばれる
-                    // ctoken.Cancel();
                 };
                 // プロセスの開始
                 proc.Start();
